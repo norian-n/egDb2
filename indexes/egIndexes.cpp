@@ -1,6 +1,6 @@
 #include "egIndexes.h"
 #include "egFingers.h"
-
+#include <filesystem>
 using namespace egIndexesNamespace;
 
 template <typename KeyType> EgIndexes<KeyType>::EgIndexes(std::string a_indexName) :
@@ -120,8 +120,8 @@ template <typename KeyType> inline void EgIndexes<KeyType>::DeleteIndexesChunk(u
         }
         // EG_LOG_STUB << "otherEmptyChunks = " << std::dec << otherEmptyChunks << FN;
         indexFileStream.close();
-        std::experimental::filesystem::path filename = indexFileName.c_str();
-        std::experimental::filesystem::resize_file(filename, indexesChunkOffset - (indexChunkSize * otherEmptyChunks));
+        std::filesystem::path filename = indexFileName.c_str(); // experimental::
+        std::filesystem::resize_file(filename, indexesChunkOffset - (indexChunkSize * otherEmptyChunks));
         indexFileStream.openToUpdate();
     } else {
         memset(localStream-> bufData, 0, indexChunkSize); // init zero chunk

@@ -1,12 +1,25 @@
 #include <iostream>
 #include "egDataNode.h"
 #include "egDataNodeLayout.h"
-#include "egDataFields.h"
+
+//  ============================================================================
+EgByteArrayType egNotFound(0);
+const char* egNotFoundStr = "<Data Not Found>";
+
+const int DATA_CONVERT_MAX_BYTES_COUNT      {10};   // 64 bits to up to 10 bytes 
+StaticLengthType    egMask7f                {0x7f}; // get 7 bits to next byte
+ByteType            egMask80                {0x80}; // not last byte flag
+//  ============================================================================
+
 
 EgDataNodeType::EgDataNodeType(EgDataNodeLayoutType* a_dataNodeLayout):
     dataNodeLayout(a_dataNodeLayout) 
 {
-    if (a_dataNodeLayout) dataFieldsContainer.fieldsCount = a_dataNodeLayout-> dataFieldsNames.size(); 
+    if (a_dataNodeLayout) { 
+        dataFieldsContainer.fieldsCount = a_dataNodeLayout-> dataFieldsNames.size();
+        dataFieldsContainer.dataFields.reserve(dataFieldsContainer.fieldsCount);
+    }
+    ByteArrayFromCharStr(egNotFoundStr, egNotFound); // FIXME STUB move to database level
 }
 
 void EgDataNodeType::clear() {
@@ -54,10 +67,23 @@ void PrintEgDataNodeTypeFields(const EgDataNodeType& dataNode){
 // ======================== DataFields ========================
 
 void AddNextDataFieldFromCharStr(const char* str, EgDataNodeType& theNode) {
-    EgByteArrayType* byteArray = new EgByteArrayType();
-    ByteArrayFromCharStr(str, *byteArray);
+    // EgByteArrayType* byteArray = new EgByteArrayType();
+    // ByteArrayFromCharStr(str, *byteArray);
+    // std::cout << "AddNextDataFieldFromCharStr() in: " << str << std::endl;
+    EgByteArrayType* byteArray = new EgByteArrayType(&(theNode.dataNodeLayout-> theHamSlicer), strlen(str)+1);  // use ham slicer allocator
+    // EgByteArrayType* byteArray = new EgByteArrayType(strlen(str)+1);  // use ham slicer allocator
+    memcpy((void*)byteArray-> arrayData, (void*) str, byteArray-> dataSize);
     theNode.dataFieldsContainer.dataFields.push_back(byteArray);
 }
+
+/*
+template <typename T> void AddNextDataFieldFromType(T&& value, EgDataNodeType& theNode) {
+    // EgByteArrayType* byteArray = new EgByteArrayType();
+    EgByteArrayType* byteArray = new EgByteArrayType(&(theNode.dataNodeLayout-> theHamSlicer), 0);  // use ham slicer allocator
+    ByteArrayFromType<T> (value, *byteArray);
+    theNode.dataFieldsContainer.dataFields.push_back(byteArray);    
+} */
+
 /*
 template <typename T> void AddNextDataFieldFromType(T&& value, EgDataNodeType& theNode) {
     EgByteArrayType* byteArray = new EgByteArrayType();

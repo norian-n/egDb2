@@ -2,7 +2,7 @@
 // #include <iostream>
 #include <map>
 // #include "egDataFields.h"
-// #include "egDataNodeLayout.h"
+#include "egDataNodeLayout.h"
 // #include "../service/egByteArray.h"
 
 // #define EG_NODE_OFFSETS_DEBUG
@@ -11,7 +11,7 @@
 #include "../service/egByteArray.h"
 #include "../service/egFileType.h"
 
-class EgDataNodeLayoutType;
+// class EgDataNodeLayoutType;
 
 struct EgDataFieldsType {
     EgFieldsCountType               fieldsCount {0};
@@ -32,9 +32,9 @@ public:
 
     std::map < EgLayoutIDType, std::vector<EgDataNodeType*> >  inLinks;
     std::map < EgLayoutIDType, std::vector<EgDataNodeType*> >  outLinks;
-#ifdef EG_NODE_OFFSETS_DEBUG
+
     EgDataNodeType() {} // for debug only
-#endif    
+
     EgDataNodeType(EgDataNodeLayoutType* a_dataNodeLayout);
     ~EgDataNodeType() { /*std::cout << "EgDataNodeType destructor, ID = " << dataNodeID << std::endl;*/ clear(); }
 
@@ -48,7 +48,8 @@ public:
 void AddNextDataFieldFromCharStr(const char* str, EgDataNodeType& theNode);
 // template <typename T> void AddNextDataFieldFromType(T&& value, EgDataNodeType& theNode);
 template <typename T> void AddNextDataFieldFromType(T&& value, EgDataNodeType& theNode) {
-    EgByteArrayType* byteArray = new EgByteArrayType();
+    // EgByteArrayType* byteArray = new EgByteArrayType();
+    EgByteArrayType* byteArray = new EgByteArrayType(&(theNode.dataNodeLayout-> theHamSlicer), 0);  // use ham slicer allocator
     ByteArrayFromType<T> (value, *byteArray);
     theNode.dataFieldsContainer.dataFields.push_back(byteArray);    
 }

@@ -35,8 +35,8 @@ bool testLinksResolving(EgLinksType& testLinks) {
 
     testLinks.ConnectDataNodesTypes(fromType, toType);
     testLinks.ResolveNodesIDsToPtrs();
-
-    /* for (auto iter : fromType.nodesContainer-> dataNodes)
+/*
+    for (auto iter : fromType.nodesContainer-> dataNodes)
         PrintEgDataNodeTypeFields(fromType[iter.first]);
 
     for (auto iter : fromType.nodesContainer-> dataNodes)
@@ -44,8 +44,7 @@ bool testLinksResolving(EgLinksType& testLinks) {
 
     for (auto iter : toType.nodesContainer-> dataNodes)
         PrintResolvedLinks(*(iter.second));
-    */
-
+*/
     // std::map < EgLinkLayoutIDType, std::vector<EgDataNodeType*> >  inLinks;
     // std::map < EgLinkLayoutIDType, std::vector<EgDataNodeType*> >  outLinks;
 

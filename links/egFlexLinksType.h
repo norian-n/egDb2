@@ -41,4 +41,4 @@ public:
 
 // ======================== Debug ========================
 
-void PrintResolvedLinks(const EgDataNodeType& node);
+void PrintResolvedLinksFlex(const EgDataNodeType& node);

@@ -19,28 +19,61 @@ StaticLengthType    testLength;
 EgFileType          testFile(fileName);
 EgDataFieldsType    testDataFields;
 
-void addSampleDataFields()
-{
-    testDataFields.fieldsCount = TEST_FIELDS_COUNT;
-    EgByteArrayType* byteArray = new EgByteArrayType();
+EgHamSlicerType     hamSlicer;
+EgHamSlicerType     hamSlicerTest;
 
-    byteArray-> arrayData = (ByteType*) field1;
+bool testHamSlicer() {
+    EgHamBrickIDType     brickID;
+    ByteType*            slicePtr;
+    ByteType*            slicePtr2;
+
+    hamSlicerTest.getSlice(500, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    hamSlicerTest.getSlice(500, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    hamSlicerTest.getSlice(600, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    hamSlicerTest.getSlice(300, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    hamSlicerTest.getSlice(300, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    // PrintHamSlices(hamSlicerTest);
+    hamSlicerTest.freeSlice(1);
+    hamSlicerTest.freeSlice(1);
+    hamSlicerTest.freeSlice(2);
+    // PrintHamSlices(hamSlicerTest);
+    hamSlicerTest.freeSlice(2);
+    hamSlicerTest.freeSlice(3);
+    // PrintHamSlices(hamSlicerTest);
+    hamSlicerTest.getSlice(500, brickID, slicePtr);
+    // cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr << std::endl;
+    hamSlicerTest.getSlice(600, brickID, slicePtr2);
+    /// cout << "brickID: " << std::dec << brickID << " ,slicePtr: " << std::hex << (uint64_t) slicePtr2 << std::endl;
+    // PrintHamSlices(hamSlicerTest);
+    return ( slicePtr  == hamSlicerTest.hamBricks[4].brickPtr
+          && slicePtr2 == hamSlicerTest.hamBricks[5].brickPtr
+          && hamSlicerTest.hamBricks.size() == 2 
+          && hamSlicerTest.hamBricksByFree.size() == 2 );
+}
+
+void addSampleDataFields() {
+    testDataFields.fieldsCount = TEST_FIELDS_COUNT;
+
+    EgByteArrayType* byteArray = new EgByteArrayType();
+    byteArray-> arrayData = (ByteType*) field1;                     // no alloc, ptr to global mem
     byteArray-> dataSize  = strlen(field1)+1;
     testDataFields.dataFields.push_back(byteArray);
 
-    byteArray = new EgByteArrayType();
-    byteArray-> arrayData = (ByteType*) field2;
-    byteArray-> dataSize  = strlen(field2)+1;
+    byteArray = new EgByteArrayType(strlen(field2)+1);              // sys heap alloc
+    memcpy((void*)byteArray-> arrayData, (void*) field2, byteArray-> dataSize);
     testDataFields.dataFields.push_back(byteArray);
 
-    byteArray = new EgByteArrayType();
-    byteArray-> arrayData = (ByteType*) field3;
-    byteArray-> dataSize  = strlen(field3)+1;
+    byteArray = new EgByteArrayType(&hamSlicer, strlen(field3)+1);  // use ham slicer allocator
+    memcpy((void*)byteArray-> arrayData, (void*) field3, byteArray-> dataSize);
     testDataFields.dataFields.push_back(byteArray);
 }
 
-int main()
-{
+int main() {
     std::remove(fileName.c_str()); // delete file
     addSampleDataFields();
 
@@ -51,9 +84,16 @@ int main()
 
     cout << "byteCountIn: " << byteCountIn << " byteCountOut: " << byteCountOut << " testLength: " << testLength << endl;
 
+    cout << "===== Test hamSlicer =====" << endl;
+
+    if (testHamSlicer())
+        cout << "PASS" << endl;
+    else
+        cout << "FAIL" << endl;
+
     cout << "===== Test egDataFields (" << field1 << " " << strlen(field1) << " " 
-                                                << field2 << " " << strlen(field2) << " "
-                                                << field3 << " " << strlen(field3) <<  ") =====" << endl;
+                                        << field2 << " " << strlen(field2) << " "
+                                        << field3 << " " << strlen(field3) <<  ") =====" << endl;
 
     testFile.openToWrite();
     writeDataFieldsToFile(testDataFields, testFile);

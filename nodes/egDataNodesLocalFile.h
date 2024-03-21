@@ -1,17 +1,14 @@
 #pragma once
 #include "egDataNode.h"
 #include "egDataNodeLayout.h"
-#ifdef EG_NODE_OFFSETS_DEBUG
-    #include <iostream>
-#endif
 
 class EgDataNodesLocalFileType
 {
 public:
     EgFileType nodesFile;
 
-    // EgDataNodesLocalFileType(): {}
-    // ~EgDataNodesLocalFileType() {}
+    EgDataNodesLocalFileType()  {}
+    ~EgDataNodesLocalFileType() {}
 
     bool InitFile(std::string layoutName);
     bool OpenFileToRead(std::string layoutName);

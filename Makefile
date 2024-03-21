@@ -1,4 +1,4 @@
-all: bytearray testdatafields testdatalayout testdatanodes testcontainer testlinks testflexlinks testdatabase testfingers testindexes 
+all: bytearray testdatafields testdatalayout testcontainer testlinks testflexlinks testdatabase testfingers testindexes 
 # clean
 
 # CXXFLAGS+=-g -Wall
@@ -25,12 +25,14 @@ testdatalayout:
 	g++ -o $(DATA_LAYOUT_BIN) $(DATA_LAYOUT_OBJ)
 
 ######################################
-DATA_NODES_SRC = tests/testDataNodesLocalFile.cpp nodes/egDataNodesLocalFile.cpp # nodes/egDataNodeLayout.cpp
-DATA_NODES_OBJ = testDataFields.o egDataNodesLocalFile.o egByteArray.o egDataNode.o egDataNodeLayout.o
-DATA_NODES_BIN = testDataNodesLocalFile.exe
-testdatanodes:
-	g++ -c $(DATA_NODES_SRC) -D EG_NODE_OFFSETS_DEBUG
-	g++ -o $(DATA_NODES_BIN) $(DATA_NODES_OBJ)
+LOCAL_FILE_SRC_PRE = service/egByteArray.cpp nodes/egDataNode.cpp nodes/egDataNodeLayout.cpp
+LOCAL_FILE_SRC = tests/testDataNodesLocalFile.cpp nodes/egDataNodesLocalFile.cpp
+LOCAL_FILE_OBJ = testDataNodesLocalFile.o egDataNodesLocalFile.o egByteArray.o egDataNode.o egDataNodeLayout.o
+LOCAL_FILE_BIN = testDataNodesLocalFile.exe
+testlocalfile:
+	g++ -c $(LOCAL_FILE_SRC_PRE) -D EG_NODE_OFFSETS_DEBUG
+	g++ -c $(LOCAL_FILE_SRC) -D EG_NODE_OFFSETS_DEBUG
+	g++ -o $(LOCAL_FILE_BIN) $(LOCAL_FILE_OBJ)
 
 ######################################
 CONTAINER_SRC = tests/testDataNodesContainer.cpp nodes/egDataNodesContainer.cpp nodes/egDataNodesLocalFile.cpp

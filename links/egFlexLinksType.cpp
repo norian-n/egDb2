@@ -107,7 +107,7 @@ int EgFlexLinksType::ResolveNodesIDsToPtrs() {
 
 // ======================== Debug ========================
 
-void PrintResolvedLinks(const EgDataNodeType& node) {
+void PrintResolvedLinksFlex(const EgDataNodeType& node) {
     if (node.outLinks.size()) {
         std::cout << "OUT links of node " << std::dec << (int)node.dataNodeID << " : ";
         for (auto outLinksIter : node.outLinks) // 17 [first, second], <11 = dataFieldsNames.begin(); fieldsIter != dataFieldsNames.end(); ++fieldsIter) {

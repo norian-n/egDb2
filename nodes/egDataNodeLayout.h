@@ -6,6 +6,7 @@
 #include "../core/egCoreTypes.h"
 #include "../indexes/egCoreIndexTypes.h"
 #include "../service/egFileType.h"
+#include "../service/egHamSlicer.h"
 
 //  ============================================================================
 //          EXTERNAL TYPES
@@ -44,6 +45,8 @@ public:
     EgDataNodeIDType    nodesCount      {0};        // data nodes count
     EgDataNodeIDType    nextNodeID      {1};        // next available data node ID
     bool                nextIDchanged   {false};    // write to file on commit
+
+    EgHamSlicerType     theHamSlicer;    // {nullptr};  // FIXME STUB move to data nodes type handler
 
     // EgDatabaseType*         myECoGraphDB        {nullptr};      // peer database (graph)
     // EgServerConnection*     serverConnection    {nullptr};      // server load & store support ( if data on server )

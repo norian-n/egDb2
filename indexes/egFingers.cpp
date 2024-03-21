@@ -1,4 +1,5 @@
 #include "egFingers.h"
+#include <filesystem>
 
 using namespace egIndexesNamespace;
 
@@ -610,8 +611,8 @@ template <typename KeyType> inline bool EgFingers<KeyType>::DeleteFingersChunk(u
         }
         // EG_LOG_STUB << "otherEmptyChunks = " << std::dec << otherEmptyChunks << FN;
         fingersFileStream.close();
-        std::experimental::filesystem::path filename = fingersFileName.c_str();
-        std::experimental::filesystem::resize_file(filename, fingersChunkOffset - (fingersChunkSize * otherEmptyChunks));
+        std::filesystem::path filename = fingersFileName.c_str(); // experimental::
+        std::filesystem::resize_file(filename, fingersChunkOffset - (fingersChunkSize * otherEmptyChunks));  // experimental::
         fingersFileStream.openToUpdate();
     } else {
         memset(localStream-> bufData, 0, fingersChunkSize); // init zero chunk

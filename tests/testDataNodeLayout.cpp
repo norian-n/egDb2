@@ -5,9 +5,10 @@ using namespace std;
 
 
 bool testDataNodeLayout() {
-    EgDataNodeLayoutType testLayout("testNodes");
+
     cout << "===== Test DataNodeLayout (2 errors must appear in negative tests) " << " =====" << endl;
 
+    EgDataNodeLayoutType testLayout("testNodes");
     EgIndexSettingsType indexSettings;
 
     std::remove("testNodes.dnl"); // delete file

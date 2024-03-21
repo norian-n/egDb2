@@ -1,8 +1,5 @@
 #include "egDataNodesLocalFile.h"
-
-#ifdef EG_NODE_OFFSETS_DEBUG
-    #include <iostream>
-#endif
+#include <iostream>
 
 bool EgDataNodesLocalFileType::InitFile(std::string layoutName) { // tests support
     nodesFile.fileName = layoutName + ".gdn";
@@ -51,6 +48,7 @@ bool EgDataNodesLocalFileType::WriteDataNode(EgDataNodeType* theNode) { // write
     } */
     // std::cout << "WriteDataNode() container fieldsCount: " << std::dec << (int) theNode-> dataFieldsContainer.fieldsCount << std::endl;
     // std::cout << "WriteDataNode() container size: " << std::dec << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
+    // std::cout << "WriteDataNode() ptr " << std::hex << (uint64_t) theNode-> dataFieldsContainer << std::endl;
     EgFileOffsetType nodeOffset = nodesFile.getFileSize();
     theNode-> dataFileOffset = nodeOffset;
 
@@ -80,8 +78,8 @@ bool EgDataNodesLocalFileType::WriteDataNode(EgDataNodeType* theNode) { // write
     nodesFile << theNode-> dataNodeID;
     nodesFile.writeType<EgFileOffsetType>(0); // pointer to next node = nullptr
     nodesFile << headerLastNodeOffset;        // pointer to prev node
-    // std::cout << "ID: " << theNode-> dataNodeID << ", headerLastNodeOffset: " <<  std::hex << headerLastNodeOffset << std::endl;
-    // std::cout << "container size: " << std::dec << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
+    // std::cout << "ID: " << std::dec << theNode-> dataNodeID << ", headerLastNodeOffset: " <<  std::hex << headerLastNodeOffset << std::endl;
+    // std::cout << "container size: " << std::dec << (int) theNode-> dataFieldsContainer.fieldsCount << " " << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
     writeDataFieldsToFile(theNode-> dataFieldsContainer, nodesFile);
     return nodesFile.fileStream.good();
 }

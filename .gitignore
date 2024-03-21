@@ -34,4 +34,4 @@
 # misc
 backup.sh
 test_all.sh
-
+*.json

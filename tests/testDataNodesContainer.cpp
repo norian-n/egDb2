@@ -54,7 +54,7 @@ bool testDataNodeLayout() {
 bool testDataNodesContainer() {
     EgDataNodesContainerType nodesContainer("testNodes");
 
-    cout << "===== Test NodesContainerType (store 3 generated nodes to testNodes.gdn, delete #2, reload and print) =====" << endl;
+    cout << "===== Test NodesContainerType (store 3 generated nodes to container testNodes.gdn, delete #2) =====" << endl;
     if(nodesContainer.LoadLocalLayout()) {
         cout << "Error: can't open data nodes layout testNodes.dnl" << endl;
         return false;
