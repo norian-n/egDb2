@@ -24,7 +24,7 @@
 *.lai
 *.la
 *.a
-*.lib
+
 
 # Executables
 *.exe
@@ -33,5 +33,5 @@
 
 # misc
 backup.sh
-test_all.sh
 *.json
+

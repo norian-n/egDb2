@@ -1,0 +1,53 @@
+all: maketests testlocalfile clean
+.PHONY: all clean
+
+# CFLAGS = -O3 -Wall -Wall -Wextra -pedantic -fPIC
+
+CC = g++ 
+LDLIBS += -lstdc++fs
+CPPFLAGS = 
+# -fPIC
+INCLUDES = 
+# -I/home/fran/some_directory
+
+EGDBLIB = -L. -legdb
+
+# SRC_FILES = tests/testDataFields.cpp service/egByteArray.cpp nodes/egDataNode.cpp
+SRC_FILES_TESTS = $(shell find tests ! -name "testDataNodesLocalFile.cpp" -name '*.cpp')
+
+#   $(name:string1=string2) For each word in 'name' replace 'string1' with 'string2'
+OBJS = $(SRC_FILES_TESTS:.cpp=.o)
+APPS = $(OBJS:.o=.exe)
+    
+maketests:   $(APPS)
+	@echo $(APPS)
+	@echo =============== Finished compilation of tests ===============
+	ls -la tests | grep '\.exe'
+
+# compile object file to .so shared library $(INCLUDES)
+
+# compile source files to object files
+# this is a suffix replacement rule for building .o's from .c's
+# it uses automatic variables $<: the name of the prerequisite of
+# the rule(a .c file) and $@: the name of the target of the rule (a .o file)
+
+%.o : %.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+%.exe : %.o
+	$(CC) $< $(EGDBLIB) -o $@
+
+######################################
+LOCAL_FILE_SRC = service/egByteArray.cpp nodes/egDataNode.cpp nodes/egDataNodeLayout.cpp \
+tests/testDataNodesLocalFile.cpp nodes/egDataNodesLocalFile.cpp
+LOCAL_FILE_OBJ = testDataNodesLocalFile.o egDataNodesLocalFile.o egByteArray.o egDataNode.o egDataNodeLayout.o
+LOCAL_FILE_BIN = tests/testDataNodesLocalFile.exe
+testlocalfile:
+	g++ -c $(LOCAL_FILE_SRC) -D EG_NODE_OFFSETS_DEBUG
+	g++ -o $(LOCAL_FILE_BIN) $(LOCAL_FILE_OBJ)
+
+clean:
+	@echo ===============  clean  ===============
+	$(RM) $(OBJS)
+	$(RM) tests/*.o
+	$(RM) *.o

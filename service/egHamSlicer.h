@@ -6,8 +6,6 @@
 
 typedef uint32_t EgHamBrickIDType;
 
-const uint64_t default_brick_size = 1000; // 1024*1; // TODO FIXME add flex bricksize to pre-launch system settings
-
 struct EgHamBrickType {
     EgHamBrickIDType brickID;
     ByteType* brickPtr;
@@ -20,6 +18,7 @@ public:
     EgHamBrickIDType    nextID {1};
     EgHamBrickType*     newBrickPtr {nullptr};
     EgHamBrickType      newHamBrick;
+    uint64_t            hamBrickSize {egDefaultHamBrickSize};
     // uint64_t  dataSize      {0};
 
     std::map <EgHamBrickIDType, EgHamBrickType>  hamBricks;
@@ -30,11 +29,11 @@ public:
 
     bool initBrick(uint64_t sliceSize) {
         newBrickPtr = nullptr;
-        if (sliceSize > default_brick_size)
+        if (sliceSize > hamBrickSize)
             return false;
-        newHamBrick.brickPtr = new ByteType[default_brick_size];
+        newHamBrick.brickPtr = new ByteType[hamBrickSize];
         newHamBrick.brickID  = nextID++;
-        newHamBrick.freeSize = default_brick_size - sliceSize;
+        newHamBrick.freeSize = hamBrickSize - sliceSize;
         newHamBrick.usedSlicesCount = sliceSize > 0 ? 1 : 0;
         if (newHamBrick.brickPtr) {
             auto bricsIter = hamBricks.insert(std::make_pair(newHamBrick.brickID, newHamBrick)); // copy to map
@@ -50,7 +49,7 @@ public:
         for (auto [first, second] : hamBricksByFree) // 11 auto bricsIter :, <11 = dataFieldsNames.begin(); fieldsIter != dataFieldsNames.end(); ++fieldsIter) {
             if (first >= sliceSize) {
                 brickID = second-> brickID;
-                slicePtr = second-> brickPtr + default_brick_size - second->freeSize;
+                slicePtr = second-> brickPtr + hamBrickSize - second->freeSize;
                 second->freeSize -= sliceSize;
                 second->usedSlicesCount++;
                 auto nodeHandler = hamBricksByFree.extract(first); // update key of map with magic 17 code

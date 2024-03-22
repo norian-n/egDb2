@@ -12,3 +12,5 @@ typedef uint8_t     EgFieldsCountType;
 typedef uint16_t    EgStrSizeType;
 
 typedef uint64_t    StaticLengthType;
+
+const uint64_t egDefaultHamBrickSize = 1024; // 1024*1; // TODO FIXME add flex bricksize to pre-launch system settings
