@@ -35,3 +35,5 @@
 backup.sh
 *.json
 
+junkyard/*
+
