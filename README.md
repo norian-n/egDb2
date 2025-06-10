@@ -4,11 +4,11 @@ Make library:
 
 make -f Makefile.lib
 
-Make unit tests (with the library):
+Make unit tests:
 
 make -f Makefile.tests
 
-Do full building and tests launch:
+To do full building and tests launch:
 
 ./all_tests.sh
 
