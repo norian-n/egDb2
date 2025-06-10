@@ -76,6 +76,13 @@ void AddNextDataFieldFromCharStr(const char* str, EgDataNodeType& theNode) {
     theNode.dataFieldsContainer.dataFields.push_back(byteArray);
 }
 
+void AddNextDataFieldFromByteArray(EgByteArrayType& ba, EgDataNodeType& theNode) {
+    EgByteArrayType* byteArray = new EgByteArrayType(&(theNode.dataNodeLayout-> theHamSlicer), ba.dataSize);  // use ham slicer allocator
+    // EgByteArrayType* byteArray = new EgByteArrayType(strlen(str)+1);
+    memcpy((void*)byteArray-> arrayData, (void*) ba.arrayData, byteArray-> dataSize);
+    theNode.dataFieldsContainer.dataFields.push_back(byteArray);
+}
+
 /*
 template <typename T> void AddNextDataFieldFromType(T&& value, EgDataNodeType& theNode) {
     // EgByteArrayType* byteArray = new EgByteArrayType();
@@ -182,6 +189,7 @@ void readDataFieldsFromFile(EgDataFieldsType& df, EgFileType& theFile) {
 
 EgDataNodeType& operator << (EgDataNodeType& egNode, const char* str) { AddNextDataFieldFromCharStr(str, egNode); return egNode; }
 EgDataNodeType& operator << (EgDataNodeType& egNode, std::string& s)  { AddNextDataFieldFromCharStr(s.c_str(), egNode); return egNode; }
+EgDataNodeType& operator << (EgDataNodeType& egNode, EgByteArrayType& ba) { AddNextDataFieldFromByteArray(ba, egNode); return egNode; }
 
 // template <typename T> EgDataNodeType& operator << (EgDataNodeType& egNode, T&& i) { AddNextDataFieldFromType<T>(i, egNode); return egNode; }
 

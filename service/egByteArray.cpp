@@ -3,19 +3,20 @@
 #include <iostream>
 #include "egByteArray.h"
 
-/*
+
 void EgByteArrayType::reassignDataArray() {
     // std::cout << "reassign dynamicDataAlloc: " << dynamicDataAlloc << std::endl;
-    if (dynamicDataAlloc)
+    if (allocMode == egHamSliceAlloc) {
+        theHamSlicer-> freeSlice(brickID);
+        if (dataSize) theHamSlicer-> getSlice(dataSize, brickID, arrayData);
+    } else if (allocMode == egSystemHeapAlloc) {
         delete arrayData;
-    if (dataSize) {
-        arrayData = new ByteType[dataSize]; // FIXME TODO paged allocator
-        dynamicDataAlloc = true;
-    } else {
-        arrayData = nullptr;
-        dynamicDataAlloc = false;
+        if (dataSize)
+            arrayData = new ByteType[dataSize]; // FIXME TODO paged allocator
+        else
+            arrayData = nullptr; 
     }
-} */
+}
 
 void ByteArrayFromCharStr(const char* str, EgByteArrayType& byteArray) {
     byteArray.dataSize  = strlen(str)+1;

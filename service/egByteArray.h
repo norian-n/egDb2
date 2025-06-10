@@ -33,7 +33,7 @@ public:
         else if (allocMode == egHamSliceAlloc) theHamSlicer-> freeSlice(brickID);
     }
 
-    // void reassignDataArray();
+    void reassignDataArray();
 };
 
 void ByteArrayFromCharStr(const char* str, EgByteArrayType& byteArray);

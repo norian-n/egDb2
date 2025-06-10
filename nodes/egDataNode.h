@@ -72,5 +72,6 @@ void PrintEgDataNodeTypeFields (const EgDataNodeType& dataNode);
 
 EgDataNodeType& operator << (EgDataNodeType& egNode, const char* str); // { AddNextDataFieldFromCharStr(str, egNode); return egNode; }
 EgDataNodeType& operator << (EgDataNodeType& egNode, std::string& s); //  { AddNextDataFieldFromCharStr(s.c_str(), egNode); return egNode; }
+EgDataNodeType& operator << (EgDataNodeType& egNode, EgByteArrayType& ba);
 
 template <typename T> EgDataNodeType& operator << (EgDataNodeType& egNode, T&& i) { AddNextDataFieldFromType<T>(i, egNode); return egNode; }

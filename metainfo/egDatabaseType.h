@@ -20,7 +20,10 @@ public:
     EgDataNodesContainerType* nodesTypesStorage;
     EgDataNodesContainerType* linksTypesStorage;
 
-    std::map <EgLayoutIDType, EgDataNodesType*>  dataNodesTypes; 
+    EgDataNodeLayoutType* testLayout {nullptr};
+    bool CreateNodeTypeFlag {true};
+
+    std::map <EgLayoutIDType, EgDataNodesType*>  dataNodesTypes;
 
     EgDatabaseType():   nodesTypesStorageLayout (new EgDataNodeLayoutType(nodesTypesStorageName)),
                         linksTypesStorageLayout (new EgDataNodeLayoutType(linksTypesStorageName)),
@@ -33,64 +36,33 @@ public:
         delete nodesTypesStorageLayout; delete linksTypesStorageLayout; delete nodesTypesStorage; delete linksTypesStorage;
     }
     
-    void clear() {
-        nodesTypesStorage-> clear();
-        linksTypesStorage-> clear();
-    }
+    void clear();
 
-    int ConnectDataNodesTypeRaw(EgLayoutIDType dntID, EgDataNodesType* dntPtr) {
-        auto iter = dataNodesTypes.find(dntID); // search if already connected
-        if (iter != dataNodesTypes.end())
-            return -1;
-        dataNodesTypes.insert(std::pair<EgLayoutIDType, EgDataNodesType* > (dntID, dntPtr));
-        return 0;
-    }
+    int ConnectDataNodesTypeRaw(EgLayoutIDType dntID, EgDataNodesType* dntPtr);
+    EgDataNodesType* GetNodeTypePtrByID(EgLayoutIDType nodeTypeID);
 
-    EgDataNodesType* GetNodeTypePtrByID(EgLayoutIDType nodeTypeID) {
-        auto iter = dataNodesTypes.find(nodeTypeID); // search all nodes
-        if (iter != dataNodesTypes.end())
-            return iter->second;
-        return nullptr;
-    }
+    void initLayouts();
 
+    void AddDataNodesTypeInfo(EgLayoutIDType layoutID, std::string& typeName);
+    void AddLinksTypeInfo(std::string& linksTypeName);
 
-    void initLayouts() {
-        nodesTypesStorageLayout-> LayoutInitStart();
-        nodesTypesStorageLayout-> AddDataFieldName("nodesLayoutID");
-        nodesTypesStorageLayout-> AddDataFieldName("nodesTypeName");
-        nodesTypesStorageLayout-> layoutSettings.isServiceType = true;
-        nodesTypesStorageLayout-> layoutMode = egLayoutActive;// virtual, do NOT commit to db
+    int LoadTypesInfo();
+    int StoreTypesInfo();
 
-        linksTypesStorageLayout-> LayoutInitStart();
-        linksTypesStorageLayout-> AddDataFieldName("linksTypeName");
-        linksTypesStorageLayout-> layoutSettings.isServiceType = true;
-        linksTypesStorageLayout-> layoutMode = egLayoutActive;// virtual, do NOT commit to db
-    }
+    int LoadLinksInfo();
+    int StoreLinksInfo();
 
-    void AddDataNodesTypeInfo(EgLayoutIDType layoutID, std::string& typeName) {
-        EgDataNodeType *newNode = new EgDataNodeType(nodesTypesStorageLayout);
-        *newNode << layoutID;
-        *newNode << typeName;
-        *nodesTypesStorage << newNode;
-    }
+    bool checkTypenameExist(std::string& typeName);
+    bool checkLinknameExist(std::string& linkName);
 
-    void AddLinksTypeInfo(std::string& linksTypeName) {
-        EgDataNodeType* newNode = new EgDataNodeType(linksTypesStorageLayout);
-        *newNode << linksTypeName;
-        *linksTypesStorage << newNode;
-    }
+    int  CreateNodeType(std::string& typeName);
+    int  CreateNodeType(const char* typeName) { std::string name(typeName); return CreateNodeType(name);  } // wrapper
+    void AddDataField(std::string& fieldName);
+    void AddDataField(const char* typeName)   { std::string name(typeName); return AddDataField(name); } // wrapper
+    void CommitNodeType();
 
-    int LoadTypesInfo() {
-        nodesTypesStorage-> clear();
-        linksTypesStorage-> clear();
-        int res1 = nodesTypesStorage-> LoadAllLocalFileNodes();
-        int res2 = linksTypesStorage-> LoadAllLocalFileNodes();
-        return res1+res2;
-    }
+    int AddLinkType(std::string& linkTypeName); // , "locations", "locations");
+    int AddLinkType(const char* linkTypeName) { std::string name(linkTypeName); return AddLinkType(name);  } // wrapper
 
-    int StoreTypesInfo() {
-        int res1 = nodesTypesStorage-> StoreToLocalFile();
-        int res2 = linksTypesStorage-> StoreToLocalFile();
-        return res1+res2;
-    }
+    // delete data nodes layout
 };

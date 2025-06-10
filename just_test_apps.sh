@@ -3,9 +3,8 @@
 ./clean.sh
 
 # rebuild
-echo ============ build lib and test apps ============
+echo ============ build test apps only ============
 
-make -f Makefile.lib
 make -f Makefile.tests
 
 echo ============ run test apps ============
