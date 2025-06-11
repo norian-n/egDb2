@@ -4,7 +4,20 @@
 
 EgDataNodeType nodeNotFound(nullptr);  // dummy data node for GUI if no data found
 
-int EgDataNodesType::Connect(EgDatabaseType &myDB, std::string serverName = std::string("")) {
+EgDataNodesType::EgDataNodesType(std::string a_dataNodesName, EgDatabaseType* aDatabase):
+            dataNodesName(a_dataNodesName),
+            metaInfoDatabase(aDatabase),
+            dataNodeLayout (new EgDataNodeLayoutType(a_dataNodesName)),
+            nodesContainer (new EgDataNodesContainerType(a_dataNodesName, dataNodeLayout)) {
+    if (OpenLocalLayout())
+    {
+        std::cout << "ERROR: EgDataNodesContainerType can't open data nodes layout " << dataNodesName << ".dnl" << std::endl;
+        isConnected = false;
+    }
+    isConnected = true;
+}
+
+int EgDataNodesType::Connect(EgDatabaseType &myDB) { //, std::string serverName = std::string("")) {
     if (OpenLocalLayout())
     {
         std::cout << "ERROR: EgDataNodesContainerType can't open data nodes layout " << dataNodesName << ".dnl" << std::endl;

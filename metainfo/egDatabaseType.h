@@ -20,7 +20,7 @@ public:
     EgDataNodesContainerType* nodesTypesStorage;
     EgDataNodesContainerType* linksTypesStorage;
 
-    EgDataNodeLayoutType* testLayout {nullptr};
+    EgDataNodeLayoutType* newLayout {nullptr};
     bool CreateNodeTypeFlag {true};
 
     std::map <EgLayoutIDType, EgDataNodesType*>  dataNodesTypes;
@@ -55,11 +55,11 @@ public:
     bool checkTypenameExist(std::string& typeName);
     bool checkLinknameExist(std::string& linkName);
 
-    int  CreateNodeType(std::string& typeName);
-    int  CreateNodeType(const char* typeName) { std::string name(typeName); return CreateNodeType(name);  } // wrapper
+    int  CreateNodeLayoutBlueprintClass (std::string& name);
+    int  CreateNodeLayoutBlueprintClass (const char* name) { std::string nameStr(name); return CreateNodeLayoutBlueprintClass(nameStr);  } // wrapper
     void AddDataField(std::string& fieldName);
     void AddDataField(const char* typeName)   { std::string name(typeName); return AddDataField(name); } // wrapper
-    void CommitNodeType();
+    void CommitNodeLayoutBlueprintClass();
 
     int AddLinkType(std::string& linkTypeName); // , "locations", "locations");
     int AddLinkType(const char* linkTypeName) { std::string name(linkTypeName); return AddLinkType(name);  } // wrapper

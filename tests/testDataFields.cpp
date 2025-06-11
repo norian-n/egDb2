@@ -57,7 +57,7 @@ bool testHamSlicer() {
 }
 
 void addSampleDataFields() {
-    testDataFields.fieldsCount = TEST_FIELDS_COUNT;
+    // testDataFields.fieldsCount = TEST_FIELDS_COUNT;
 
     EgByteArrayType* byteArray = new EgByteArrayType();
     byteArray-> arrayData = (ByteType*) field1;                     // no alloc, ptr to global mem
@@ -95,12 +95,23 @@ int main() {
                                         << field2 << " " << strlen(field2) << " "
                                         << field3 << " " << strlen(field3) <<  ") =====" << endl;
 
+    EgDataNodeLayoutType testLayout("testNodes");
+
+    testLayout.LayoutInitStart();
+    testLayout.AddDataFieldName("nodesLayoutID");
+    testLayout.AddDataFieldName("nodesTypeName");
+    testLayout.AddDataFieldName("nodesTypeData");
+    testLayout.layoutSettings.isServiceType = true;
+    testLayout.layoutMode = egLayoutActive; // virtual, do NOT commit to db
+
+    EgDataNodeType testNode(&testLayout);
+
     testFile.openToWrite();
-    writeDataFieldsToFile(testDataFields, testFile);
+    testNode.writeDataFieldsToFile(testDataFields, testFile);
     testFile.close();
 
     testFile.openToRead();
-    readDataFieldsFromFile(testDataFields, testFile);
+    testNode.readDataFieldsFromFile(testDataFields, testFile);
     testFile.close();   
 
     for (const auto& field : testDataFields.dataFields)

@@ -10,29 +10,34 @@
 
 class EgLinksType;
 
+/*
+enum EgNodesListModeEnum
+{
+    egLayoutInit,
+    egLayoutActive,
+    egLayoutDataPump    // TBD: special data copy procedure with parameters "from field => to field", indexes rebuilding
+};
+*/
+
 //  ============================================================================
 
 class EgDataNodesType { // DataNodesAmbience
 public:
-    bool                        isConnected     { false };      // ? TODO nodes data status ( connected, no file, no server)
+    bool                        isConnected      { false };     // ? TODO nodes data status ( connected, no file, no server)
     std::string                 dataNodesName;
-    EgDatabaseType*             metaInfoDatabase;
-    EgDataNodeLayoutType*       dataNodeLayout  { nullptr };    // layout == class == type of data nodes
-    EgDataNodesContainerType*   nodesContainer  { nullptr };
+    EgDatabaseType*             metaInfoDatabase { nullptr };   // nodes and links layout == blueprint == class == type info
+    EgDataNodeLayoutType*       dataNodeLayout   { nullptr };   // layout == blueprint == class == type of these data nodes
+    EgDataNodesContainerType*   nodesContainer   { nullptr };   // data storage of all these nodes
 
     std::map < std::string, EgLinksType* >    linksNames;
 
     // EgIndexConditionsTree* index_tree       {nullptr};       // indexed fields operations
     // std::vector <uint64_t> IndexOffsets;                     // offsets returned by index, for index-based operations (AND, OR)
 
-    EgDataNodesType(std::string a_dataNodesName, EgDatabaseType* aDatabase):
-            dataNodesName(a_dataNodesName),
-            metaInfoDatabase(aDatabase),
-            dataNodeLayout (new EgDataNodeLayoutType(a_dataNodesName)),
-            nodesContainer (new EgDataNodesContainerType(a_dataNodesName, dataNodeLayout)) {}
+    EgDataNodesType(std::string a_dataNodesName, EgDatabaseType* aDatabase);
     ~EgDataNodesType() { clear(); delete dataNodeLayout; delete nodesContainer; }
 
-    int Connect(EgDatabaseType& myDB, std::string serverName);
+    int Connect(EgDatabaseType& myDB); // , std::string serverName);
     void clear();
     int OpenLocalLayout();
 

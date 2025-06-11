@@ -46,7 +46,7 @@ bool EgDataNodesLocalFileType::WriteDataNode(EgDataNodeType* theNode) { // write
     /* if ( !theNode) {
         std::cout  << "DEBUG: WriteDataNode() theNode ptr is NULL " << std::endl;
     } */
-    // std::cout << "WriteDataNode() container fieldsCount: " << std::dec << (int) theNode-> dataFieldsContainer.fieldsCount << std::endl;
+    // std::cout << "WriteDataNode() container fieldsCount: " << std::dec << (int) (theNode-> dataNodeLayout-> fieldsCount) << std::endl;
     // std::cout << "WriteDataNode() container size: " << std::dec << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
     // std::cout << "WriteDataNode() ptr " << std::hex << (uint64_t) theNode-> dataFieldsContainer << std::endl;
     EgFileOffsetType nodeOffset = nodesFile.getFileSize();
@@ -79,8 +79,8 @@ bool EgDataNodesLocalFileType::WriteDataNode(EgDataNodeType* theNode) { // write
     nodesFile.writeType<EgFileOffsetType>(0); // pointer to next node = nullptr
     nodesFile << headerLastNodeOffset;        // pointer to prev node
     // std::cout << "ID: " << std::dec << theNode-> dataNodeID << ", headerLastNodeOffset: " <<  std::hex << headerLastNodeOffset << std::endl;
-    // std::cout << "container size: " << std::dec << (int) theNode-> dataFieldsContainer.fieldsCount << " " << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
-    writeDataFieldsToFile(theNode-> dataFieldsContainer, nodesFile);
+    // std::cout << "container size: " << std::dec << (int) theNode-> dataNodeLayout-> fieldsCount << " " << theNode-> dataFieldsContainer.dataFields.size() << std::endl;
+    theNode-> writeDataFieldsToFile(theNode-> dataFieldsContainer, nodesFile);
     return nodesFile.fileStream.good();
 }
 
@@ -92,7 +92,7 @@ bool EgDataNodesLocalFileType::ReadDataNode(EgDataNodeType *theNode, EgFileOffse
     // std::cout  << " , dataNodeID = " << std::dec << theNode-> dataNodeID;
     // std::cout  << " , nextOffset = " << std::hex << nextOffset << std::endl;
     nodesFile.seekRead(theNode->dataFileOffset + sizeof(EgDataNodeIDType) + 2 * sizeof(EgFileOffsetType));
-    readDataFieldsFromFile(theNode->dataFieldsContainer, nodesFile);
+    theNode-> readDataFieldsFromFile(theNode->dataFieldsContainer, nodesFile);
     return nodesFile.fileStream.good();
 }
 
@@ -132,5 +132,5 @@ void ReadDataNodeAndOffsets(EgFileType &theNodesFile, EgDataNodeType *theNode) {
     theNodesFile >> theNode->nextNodeOffset;
     theNodesFile >> theNode->prevNodeOffset;
 #endif
-    readDataFieldsFromFile(theNode->dataFieldsContainer, theNodesFile);
+    theNode-> readDataFieldsFromFile(theNode->dataFieldsContainer, theNodesFile);
 }

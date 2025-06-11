@@ -92,35 +92,35 @@ bool EgDatabaseType::checkLinknameExist(std::string& linkName) {
     return true;
 }
 
-int EgDatabaseType::CreateNodeType(std::string& typeName) { //,  EgNodeTypeSettings& typeSettings)
+int EgDatabaseType::CreateNodeLayoutBlueprintClass(std::string& name) { //,  EgNodeTypeSettings& typeSettings)
     CreateNodeTypeFlag = true; // ok to add fields
-    if (! checkTypenameExist(typeName)) { // check nodestype/layout name
+    if (! checkTypenameExist(name)) { // check nodestype/layout name
         std::cout << "ERROR: Data nodes type/layout name already exists, cant CreateNodeType()" << std::endl;
         CreateNodeTypeFlag = false; // abort next ops
         return -1;
     }
 
-    testLayout = new EgDataNodeLayoutType(typeName);
-    testLayout-> LayoutInitStart();
-    // std::cout << "testLayout before: " << testLayout->layoutName << " " << (int) testLayout-> layoutID << std::endl;
-    AddDataNodesTypeInfo(testLayout->layoutID, typeName); // FIXME STUB
+    newLayout = new EgDataNodeLayoutType(name);
+    newLayout-> LayoutInitStart();
+    // std::cout << "newLayout before: " << newLayout->layoutName << " " << (int) newLayout-> layoutID << std::endl;
+    AddDataNodesTypeInfo(newLayout->layoutID, name); // FIXME STUB
 
     return 0;
 }
 
 void EgDatabaseType::AddDataField(std::string& fieldName) {
     if (CreateNodeTypeFlag)
-        testLayout-> AddDataFieldName(fieldName);
+        newLayout-> AddDataFieldName(fieldName);
 }
 
-void EgDatabaseType::CommitNodeType() {
+void EgDatabaseType::CommitNodeLayoutBlueprintClass() {
     if (CreateNodeTypeFlag)
     {
-        testLayout->LayoutInitCommit();
-        std::cout << "testLayout after: " << testLayout->layoutName << " " << (int) testLayout-> layoutID << std::endl;
+        newLayout-> LayoutInitCommit();
+        std::cout << "newLayout after: " << newLayout->layoutName << " " << (int) newLayout-> layoutID << std::endl;
         StoreTypesInfo();
-        delete testLayout;
-        testLayout = nullptr;
+        delete newLayout;
+        newLayout = nullptr;
     }
 }
 

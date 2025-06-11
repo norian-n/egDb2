@@ -16,8 +16,8 @@ EgDataNodeType::EgDataNodeType(EgDataNodeLayoutType* a_dataNodeLayout):
     dataNodeLayout(a_dataNodeLayout) 
 {
     if (a_dataNodeLayout) { 
-        dataFieldsContainer.fieldsCount = a_dataNodeLayout-> dataFieldsNames.size();
-        dataFieldsContainer.dataFields.reserve(dataFieldsContainer.fieldsCount);
+        // dataFieldsContainer.fieldsCount = a_dataNodeLayout-> dataFieldsNames.size();
+        dataFieldsContainer.dataFields.reserve(a_dataNodeLayout-> fieldsCount);
     }
     ByteArrayFromCharStr(egNotFoundStr, egNotFound); // FIXME STUB move to database level
 }
@@ -142,7 +142,7 @@ uint8_t egConvertFlexToStatic(ByteType* flexibleVal, StaticLengthType& staticVal
     return byteCount;
 }
 
-void writeDataFieldsToFile(EgDataFieldsType& df, EgFileType &theFile) {
+void EgDataNodeType::writeDataFieldsToFile(EgDataFieldsType& df, EgFileType &theFile) {
     ByteType lengthRawData[DATA_CONVERT_MAX_BYTES_COUNT]; // flex size buffer, see egDataConvert.h
     // std::cout << "writeDataFieldsToFile() start, " << std::dec << df.dataFields.size() << std::endl;
     std::vector<EgByteArrayType*>::iterator field;
@@ -163,23 +163,24 @@ void writeDataFieldsToFile(EgDataFieldsType& df, EgFileType &theFile) {
     theFile.fileStream.flush();
 }
 
-void readDataFieldsFromFile(EgDataFieldsType& df, EgFileType& theFile) {
+void EgDataNodeType::readDataFieldsFromFile(EgDataFieldsType& df, EgFileType& theFile) {
     ByteType lengthRawData[DATA_CONVERT_MAX_BYTES_COUNT]; // flex size buffer, see egDataConvert.h
     EgByteArrayType* newField;
     df.dataFields.clear();
-    df.dataFields.resize(df.fieldsCount);
-    // std::cout << "readDataFieldsFromFile() fieldsCount: " << std::dec << (int) df.fieldsCount << std::endl;
-    for (EgFieldsCountType i = 0; i < df.fieldsCount; i++) {
+    df.dataFields.resize(dataNodeLayout-> fieldsCount);
+    // std::cout << "readDataFieldsFromFile() fieldsCount: " << std::dec << (int) dataNodeLayout-> fieldsCount << std::endl;
+    for (EgFieldsCountType i = 0; i < dataNodeLayout-> fieldsCount; i++) {
         uint64_t savePos = static_cast<uint64_t>(theFile.fileStream.tellg());
         uint64_t fileTailSize = theFile.getFileSize() - savePos;
         theFile.seekRead(savePos);
         theFile.fileStream.read((char *)lengthRawData, std::min((uint64_t)DATA_CONVERT_MAX_BYTES_COUNT, fileTailSize)); // read size
-        uint8_t lenSize = egConvertFlexToStatic(lengthRawData, df.dataFieldSizeTmp);
+        uint64_t dataFieldSizeTmp;
+        uint8_t lenSize = egConvertFlexToStatic(lengthRawData, dataFieldSizeTmp);
         // std::cout << "newField.dataSize: " << std::dec << (int) df.dataSize;
-        newField = new EgByteArrayType(df.dataFieldSizeTmp); // +1
+        newField = new EgByteArrayType(dataFieldSizeTmp); // +1
         theFile.seekRead(savePos + lenSize);
-        theFile.fileStream.read((char *)(newField->arrayData), df.dataFieldSizeTmp); // read data
-        // newField->arrayData[df.dataFieldSizeTmp] = 0;
+        theFile.fileStream.read((char *)(newField->arrayData), dataFieldSizeTmp); // read data
+        // newField->arrayData[dataFieldSizeTmp] = 0;
         // std::cout << " newField.arrayData: " << (char *)(newField->arrayData) << std::endl;
         df.dataFields[i] = newField;
     }

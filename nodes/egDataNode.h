@@ -14,9 +14,9 @@
 // class EgDataNodeLayoutType;
 
 struct EgDataFieldsType {
-    EgFieldsCountType               fieldsCount {0};
-    uint64_t                        dataFieldSizeTmp;
-    std::vector<EgByteArrayType*>   dataFields;
+    // EgFieldsCountType               fieldsCount {0};
+    // uint64_t                        dataFieldSizeTmp;
+    std::vector<EgByteArrayType*>   dataFields;  // FIXME move to dynamic array
 };
 
 class EgDataNodeType {
@@ -39,8 +39,11 @@ public:
     ~EgDataNodeType() { /*std::cout << "EgDataNodeType destructor, ID = " << dataNodeID << std::endl;*/ clear(); }
 
     void clear();
-    EgByteArrayType& operator[](std::string fieldStrName);
+    EgByteArrayType& operator[](std::string fieldStrName);  // field data by name
     EgByteArrayType& operator[](const char* fieldCharName);
+       
+    void writeDataFieldsToFile(EgDataFieldsType& df, EgFileType &theFile);  // local file operations
+    void readDataFieldsFromFile(EgDataFieldsType& df, EgFileType& theFile);
 };
 
 // ======================== DataFields ========================
@@ -58,10 +61,6 @@ uint8_t egConvertStaticToFlex(StaticLengthType staticVal, ByteType* flexibleVal)
 
 // reverse convert variable length dataset size to fixed length one for faster processing
 uint8_t egConvertFlexToStatic(ByteType* flexibleVal, StaticLengthType& staticVal);
-
-// file operations
-void writeDataFieldsToFile(EgDataFieldsType& df, EgFileType &theFile);
-void readDataFieldsFromFile(EgDataFieldsType& df, EgFileType& theFile);
 
 // ======================== Debug ========================
 

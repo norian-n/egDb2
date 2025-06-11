@@ -53,6 +53,7 @@ public:
     EgFileType                  layoutFile;                        // local files load & store support (if local files used)    
 
     EgNodeLayoutSettingsType    layoutSettings;                    // add-ons for layout type
+    EgFieldsCountType           fieldsCount {0};
 
     std::map < std::string, EgFieldsCountType >           dataFieldsNames;    // map  data node field names to fields order
     std::map < EgFieldsCountType, EgIndexSettingsType >   indexedFields;      // map indexed fields names to structure

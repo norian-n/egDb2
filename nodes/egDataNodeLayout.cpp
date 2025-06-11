@@ -25,6 +25,7 @@ int EgDataNodeLayoutType::LayoutInitStart() {
     }
     else
     {
+        fieldsCount = 0;
         dataFieldsNames.clear();
         indexedFields.clear();
         layoutMode = egLayoutInit;
@@ -39,6 +40,7 @@ void EgDataNodeLayoutType::AddDataFieldName(std::string fieldName) {
     {
         EgFieldsCountType order = (EgFieldsCountType)dataFieldsNames.size();
         dataFieldsNames.insert(std::make_pair(fieldName, order));
+        fieldsCount++;
     }
     // std::cout  << "AddDataField name: " << fieldName << " index: " << order << std::endl;
 }
@@ -75,12 +77,12 @@ inline void EgDataNodeLayoutType::writeDataFieldsNames() {
 }
 
 inline void EgDataNodeLayoutType::readDataFieldsNames() {
-    EgFieldsCountType fieldsCount{0};
+    EgFieldsCountType fieldsCountTmp{0};
     EgFieldsCountType order{0};
     std::string fieldName;
-    layoutFile.readType<EgFieldsCountType>(fieldsCount);
-    // std::cout << "fieldsCount: " << std::dec << (int) fieldsCount << std::endl;
-    for (EgFieldsCountType i = 0; i < fieldsCount; i++)
+    layoutFile.readType<EgFieldsCountType>(fieldsCountTmp);
+    // std::cout << "fieldsCountTmp: " << std::dec << (int) fieldsCountTmp << std::endl;
+    for (EgFieldsCountType i = 0; i < fieldsCountTmp; i++)
     {
         fieldName.clear();
         layoutFile >> fieldName;
@@ -102,11 +104,11 @@ inline void EgDataNodeLayoutType::writeIndexedFields() {
 }
 
 inline void EgDataNodeLayoutType::readIndexesFields() {
-    EgFieldsCountType fieldsCount{0};
+    EgFieldsCountType fieldsCountTmp{0};
     EgFieldsCountType index{0};
     EgIndexSettingsType indexSettings;
-    layoutFile.readType<EgFieldsCountType>(fieldsCount);
-    for (EgFieldsCountType i = 0; i < fieldsCount; i++)
+    layoutFile.readType<EgFieldsCountType>(fieldsCountTmp);
+    for (EgFieldsCountType i = 0; i < fieldsCountTmp; i++)
     {
         layoutFile.readType<EgFieldsCountType>(index);
         layoutFile >> indexSettings.indexFamilyType;
@@ -120,6 +122,7 @@ int EgDataNodeLayoutType::LocalStoreLayout() {
     layoutFile.fileName = layoutName + ".dnl";
     layoutFile.openToWrite();
 
+    layoutFile << fieldsCount;
     layoutFile << nodesCount;
     layoutFile << nextNodeID;
 
@@ -145,6 +148,7 @@ int EgDataNodeLayoutType::LocalLoadLayout() {
     if (!layoutFile.openToRead())
         return -1;
 
+    layoutFile >> fieldsCount;
     layoutFile >> nodesCount;
     layoutFile >> nextNodeID;
 
@@ -167,6 +171,7 @@ int EgDataNodeLayoutType::LocalLoadLayout() {
 // ======================== Debug ========================
 
 void PrintDataNodeLayout(EgDataNodeLayoutType& layout) {
+    std::cout << "fieldsCount: " << std::dec << layout.fieldsCount;    
     std::cout << "nodesCount: " << std::dec << layout.nodesCount;
     std::cout << " nextNodeID: " << layout.nextNodeID << std::endl;
 

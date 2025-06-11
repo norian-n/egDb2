@@ -44,6 +44,12 @@ int EgDataNodesContainerType::MarkUpdatedDataNode(EgDataNodeType *theNode) {
     auto iter = dataNodes.find(theNode->dataNodeID); // search all nodes
     if (iter == dataNodes.end())
         return -1;
+    auto delIter = deletedDataNodes.find(theNode->dataNodeID); // search all nodes
+    if (delIter != deletedDataNodes.end())
+        return -2;
+    auto addIter = addedDataNodes.find(theNode->dataNodeID); // search added nodes
+    if (addIter != addedDataNodes.end())
+        return -3;
     updatedDataNodes.insert(std::make_pair(theNode-> dataNodeID, theNode));
     return 0;
 }
@@ -90,7 +96,8 @@ int EgDataNodesContainerType::StoreToLocalFile() {
     // std::cout << "===== After WriteDataNode 1 =====" << std::endl;
     for (auto newNodesIter : addedDataNodes) {
         // PrintEgDataNodeTypeFields(*(newNodesIter.second));
-        // std::cout << "StoreToLocalFile() container size: " << std::dec << (newNodesIter.second)-> dataFieldsContainer.dataFields.size() << std::endl;
+        // std::cout << "StoreToLocalFile() container fieldsCount: " << std::dec << (int) ((newNodesIter.second)-> dataNodeLayout-> fieldsCount) << std::endl;
+        // std::cout << "StoreToLocalFile() container size: " << std::dec << (int) ((newNodesIter.second)-> dataFieldsContainer.dataFields.size()) << std::endl;
         // std::cout << "newNodesIter.second: " << std::hex << (uint64_t) &((newNodesIter.second)-> dataFieldsContainer.dataFields) << std::endl;
         // std::cout << "* (newNodesIter.second) : " << std::hex << (uint64_t) &((*(newNodesIter.second)).dataFieldsContainer.dataFields) << std::endl;
         LocalNodesFile-> WriteDataNode(newNodesIter.second);
